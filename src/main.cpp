@@ -1,6 +1,7 @@
+#include "sorting.h"
 #include <iostream>
 #include <thread>
-#include "sorting.h"
+#include <mutex>
 
 int main(){
     // Initialize the array
