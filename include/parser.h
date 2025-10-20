@@ -10,9 +10,9 @@ class Process{
         int Pid;
         int arrivalTime;
         int burstTime;
-        int Priority; 
+        int priority; 
 };
 
-Process parseProcess(std::vector<std::string> tokens);
+Process parseProcess(std::vector<std::string>& fileName);
 
 #endif
