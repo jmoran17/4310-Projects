@@ -1,7 +1,7 @@
-#include "parser.h"
 #include <sstream>
 #include <fstream>
 #include <iostream>
+#include "parser.h"
 
 //parse file to get process information
 std::vector<Process> parseProcess(const std::string& filename){
