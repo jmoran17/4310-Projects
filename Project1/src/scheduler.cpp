@@ -1,5 +1,6 @@
 #include "scheduler.h"
 #include <algorithm>
+#include <iostream>
 
 Metrics FCFS(std::vector<Process>& Processes){
     //initialize metrics
@@ -14,10 +15,16 @@ Metrics FCFS(std::vector<Process>& Processes){
             currentTime = p.arrivalTime;
         }
         p.waitingTime = currentTime - p.arrivalTime;//calculates against initial currentTime
-        currentTime += p.burstTime;
         p.responseTime = p.waitingTime;
+        //for loop printing progress of task every ms
+        for(int t = 0; t < p.burstTime; t++){
+            currentTime++;
+            std::cout<< "Time " << currentTime << " milliseconds: Process " << p.Pid << " is running. \n";
+        }
+
         p.turnaroundTime = currentTime - p.arrivalTime;//uses currentTime after burst has been added
     }
+
     for (auto& p : Processes){
         m.busyTime += p.burstTime;
         m.totalWait += p.waitingTime;
