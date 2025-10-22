@@ -2,9 +2,23 @@
 #include <algorithm>
 #include <iostream>
 
+Metrics metricCalcs(const std::vector<Process>& Processes, Metrics& m, int currentTime){
+    for(auto& p : Processes){
+        m.busyTime += p.burstTime;
+        m.totalWait += p.waitingTime;
+        m.totalTurn += p.turnaroundTime;
+        m.totalResponse += p.responseTime;
+    }
+    m.avgWait = static_cast<float>(m.totalWait) / Processes.size();
+    m.avgTurn = static_cast<float>(m.totalTurn) / Processes.size();
+    m.avgResponse = static_cast<float>(m.totalResponse) / Processes.size();
+    m.cpuUtil = (static_cast<float>(m.busyTime) / currentTime) * 100;
+    return m;
+}
+
 Metrics FCFS(std::vector<Process>& Processes){
     //initialize metrics
-    Metrics m;
+    Metrics m; 
 
     //sort the Processes by arrival time to get a FCFS order
     std::sort(Processes.begin(), Processes.end(),
@@ -24,17 +38,8 @@ Metrics FCFS(std::vector<Process>& Processes){
 
         p.turnaroundTime = currentTime - p.arrivalTime;//uses currentTime after burst has been added
     }
+    m = metricCalcs(Processes, m, currentTime);
 
-    for (auto& p : Processes){
-        m.busyTime += p.burstTime;
-        m.totalWait += p.waitingTime;
-        m.totalTurn += p.turnaroundTime;
-        m.totalResponse += p.responseTime;
-    }
-    m.avgWait = static_cast<float>(m.totalWait) / Processes.size();
-    m.avgTurn = static_cast<float>(m.totalTurn) / Processes.size();
-    m.avgResponse = static_cast<float>(m.totalResponse) / Processes.size();
-    m.cpuUtil = (static_cast<float>(m.busyTime) / currentTime) * 100;
     return m;
 }
 
@@ -43,7 +48,6 @@ Metrics SJF(const std::vector<Process>& Processes){
 }
 
 Metrics Preemptive(const std::vector<Process>& Processes){
-
 
 }
 

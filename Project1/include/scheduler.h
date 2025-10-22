@@ -18,6 +18,7 @@ struct Metrics{
 };
 
 //functions for parsing the file and running the scheduling algorithm
+Metrics metricCalcs(const std::vector<Process>& Processes, Metrics& m, int currentTime);
 Metrics FCFS(std::vector<Process>& Processes);
 Metrics SJF(std::vector<Process>& Processes);
 Metrics Preemptive(std::vector<Process>& Processes);
