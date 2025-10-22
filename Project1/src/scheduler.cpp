@@ -16,6 +16,23 @@ Metrics metricCalcs(const std::vector<Process>& Processes, Metrics& m, int curre
     return m;
 }
 
+std::vector<Process> processCalcs(std::vector<Process>& Processes, int currentTime){
+    for(auto& p : Processes){
+        if(currentTime <= p.arrivalTime){
+            currentTime = p.arrivalTime;
+        }
+        p.waitingTime = currentTime - p.arrivalTime;//calculates against initial currentTime
+        p.responseTime = p.waitingTime;
+        //for loop printing progress of task every ms
+        for(int t = 0; t < p.burstTime; t++){
+            currentTime++;
+            std::cout<< "Time " << currentTime << " milliseconds: Process " << p.Pid << " is running. \n";
+        }
+
+        p.turnaroundTime = currentTime - p.arrivalTime;//uses currentTime after burst has been added
+    }
+}
+
 Metrics FCFS(std::vector<Process>& Processes){
     //initialize metrics
     Metrics m; 
@@ -44,6 +61,10 @@ Metrics FCFS(std::vector<Process>& Processes){
 }
 
 Metrics SJF(const std::vector<Process>& Processes){
+    //sort processes by arrival time to get SJF order
+    std::sort(Processes.begin(), Processes.end(),
+    [](const Process& a, const Process& b){return a.burstTime < b.burstTime; });
+
 
 }
 
