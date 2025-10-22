@@ -16,6 +16,7 @@ class Process{
         int waitingTime = 0;
         int turnaroundTime = 0;
         int responseTime = 0;
+        int endTime = 0;
 };
 
 std::vector<Process> parseProcess(const std::string& filename);
