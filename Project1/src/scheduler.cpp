@@ -19,16 +19,6 @@ Metrics metricCalcs(const std::vector<Process>& Processes, Metrics& m, const int
     return m;
 }
 
-void processCalcs(std::vector<Process>& Processes, int& currentTime){
-    for(auto& p : Processes){
-        if(currentTime <= p.arrivalTime){
-            currentTime = p.arrivalTime;
-        }
-        p.waitingTime = currentTime - p.arrivalTime;//calculates against initial currentTime
-        p.responseTime = p.waitingTime;
-        p.turnaroundTime = currentTime - p.arrivalTime;//uses currentTime after burst has been added
-    }
-}
 
 void runProcess(Process& p, int& currentTime, int duration){
     if(currentTime <= p.arrivalTime){
@@ -36,14 +26,15 @@ void runProcess(Process& p, int& currentTime, int duration){
         }
         p.waitingTime = currentTime - p.arrivalTime;//calculates against initial currentTime
         p.responseTime = p.waitingTime;
-        p.turnaroundTime = currentTime - p.arrivalTime;//uses currentTime after burst has been added
-    
+        
+
     for(int t = 0; t < duration; t++){
             currentTime++;
             std::cout<< "Time " << currentTime << " milliseconds: Process " << p.Pid << " is running. \n";
-        }
     }
+    p.turnaroundTime = currentTime - p.arrivalTime;//uses currentTime after burst has been added
 }
+
 Metrics FCFS(std::vector<Process>& Processes){
     //initialize metrics and currentTime
     Metrics m; 
@@ -53,8 +44,9 @@ Metrics FCFS(std::vector<Process>& Processes){
     std::sort(Processes.begin(), Processes.end(),
         [](const Process& a, const Process& b){return a.arrivalTime < b.arrivalTime; });
 
-
-    processCalcs(Processes, currentTime);
+    for(auto& p : Processes){
+        runProcess(p, currentTime, p.burstTime);
+    }
     m = metricCalcs(Processes, m, currentTime);
 
     return m;
@@ -64,17 +56,27 @@ Metrics SJF( std::vector<Process>& Processes){
     //initialize metrics and currentTime
     Metrics m;
     int currentTime = 0;
-    std::vector<Process> ready;
+    int completed = 0;
+    std::vector<Process*> ready;
+    int totalProcesses = Processes.size();
+    int completed = 0;
     //sort processes by arrival time to get SJF order
     std::sort(Processes.begin(), Processes.end(),
-        [](const Process& a, const Process& b){return a.burstTime < b.burstTime; });
+        [](const Process& a, const Process& b){return a.arrivalTime < b.arrivalTime; });
+
     for (auto& p : Processes){
-        if(currentTime >= p.arrivalTime){
-            ready.push_back(p);
+        if(currentTime < p.arrivalTime){
+            continue;
+        }else{
+            ready.push_back(&p);
+        }
+
+        if(!ready.empty()){
+            for(auto& p : ready){
+                runProcess(p, currentTime, p.burstTime);
+            } 
         }
     }
-    logger(Processes, currentTime);
-    processCalcs(Processes, currentTime);
     m = metricCalcs(Processes, m, currentTime);
 
     return m;
