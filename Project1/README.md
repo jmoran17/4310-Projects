@@ -2,8 +2,8 @@ Project 1: Multithreaded Sorting & CPU Scheduling Simulation
 ============================================================
 
 Author: Joseph Moran
-Date: 28 June 2025
-Course: CS 4200 - Artificial Intelligence
+Date: 24 October 2025
+Course: CS 4310 - Operating Systems
 
 Overview
 --------
