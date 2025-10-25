@@ -27,6 +27,8 @@ Sorting uses a predefined array within the program.
 
 Building the Project
 -------------------
+# If you already have the project build skip to running program step 2
+
 1. Create a build directory:
    mkdir build
    cd build
@@ -39,14 +41,11 @@ Building the Project
 
 Running the Program
 -------------------
-1. Navigate to the build directory:
-   cd build
+1. Navigate to the root directory:
+   cd ..
 
-2. Run the executable:
-   On Windows:
-       Project1.exe
-   On Linux/macOS:
-       ./Project1
+2. If you already have the program build or after building run the executable in terminal:
+   .\build\Debug\Project1.exe
 
 Function
 --------
