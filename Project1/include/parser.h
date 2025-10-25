@@ -12,10 +12,12 @@ class Process{
         int arrivalTime;
         int burstTime;
         int priority;
+        int remainingTime;
+        bool completed = false;
         
         int waitingTime = 0;
         int turnaroundTime = 0;
-        int responseTime = 0;
+        int responseTime = -1;
         int endTime = 0;
 };
 

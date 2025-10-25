@@ -1,4 +1,5 @@
 #include "sorting.h"
+#include "scheduler.h"
 #include <iostream>
 #include <thread>
 #include <mutex>
@@ -25,4 +26,57 @@ int main(){
         std::cout << num << " ";
     }
     std::cout << std::endl;
+
+    std::string filename = "input.txt";
+    std::vector<Process> Processes;
+
+    try {
+        Processes = parseProcess(filename);
+    } catch(const std::exception& e) {
+        std::cerr << "Error reading file: " << e.what() << std::endl;
+        return 1;
+    }
+
+    std::cout << "Choose a scheduling algorithm:\n";
+    std::cout << "1 - FCFS\n";
+    std::cout << "2 - SJF\n";
+    std::cout << "3 - Preemptive Priority\n";
+    std::cout << "4 - Round Robin\n";
+    std::cout << "Enter choice: ";
+
+    int choice;
+    std::cin >> choice;
+
+    Metrics metrics;
+    int quantum = 4; // default for RR
+
+    switch(choice) {
+        case 1:
+            metrics = FCFS(Processes);
+            std::cout << "FCFS Results:\n";
+            break;
+        case 2:
+            metrics = SJF(Processes);
+            std::cout << "SJF Results:\n";
+            break;
+        case 3:
+            metrics = Preemptive(Processes);
+            std::cout << "Preemptive Priority Results:\n";
+            break;
+        case 4:
+            std::cout << "Enter quantum for Round Robin: ";
+            std::cin >> quantum;
+            metrics = RR(Processes, quantum);
+            std::cout << "Round Robin Results:\n";
+            break;
+        default:
+            std::cerr << "Invalid choice.\n";
+            return 1;
+    }
+
+    // Print metrics
+    std::cout << "Average Waiting Time: " << metrics.avgWait << "\n";
+    std::cout << "Average Turnaround Time: " << metrics.avgTurn << "\n";
+    std::cout << "CPU Utilization: " << metrics.cpuUtil << "%\n";
+
 }
