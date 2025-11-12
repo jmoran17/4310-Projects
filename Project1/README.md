@@ -1,8 +1,8 @@
 Project 1: Multithreaded Sorting & CPU Scheduling Algorithm
 
 Author: Joseph Moran
-Date: 28 June 2025
-Course: CS 4200 - Artificial Intelligence
+Date: 24 October 2025
+Course: CS 4310 - Operating Systems
 
 Overview
 This project demonstrates two main concepts:
@@ -23,6 +23,9 @@ Pid Arrival_Time Burst_Time Priority
 Sorting uses a predefined array within the program.
 
 Building the Project
+-------------------
+# If you already have the project build skip to running program step 2
+
 1. Create a build directory:
    mkdir build
    cd build
@@ -34,14 +37,12 @@ Building the Project
    cmake --build .
 
 Running the Program
-1. Navigate to the build directory:
-   cd build
+-------------------
+1. Navigate to the root directory:
+   cd ..
 
-2. Run the executable:
-   On Windows:
-       Project1.exe
-   On Linux/macOS:
-       ./Project1
+2. If you already have the program build or after building run the executable in terminal:
+   .\build\Debug\Project1.exe
 
 Function
 1. The program first runs a multithreaded sorting example.
