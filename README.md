@@ -4,10 +4,10 @@ Operating Systems Class Projects
 ## Project 1
 This project shows focuses on a multi-threaded sorting application and CPU Process scheduling
 
-1. **Multi-Threaded Sorting Application**
+1. **Multi-Threaded Sorting Application**  
     Takes in a user input from the console and uses multiple threads in order to sort and recombine the users input
 
-2. **CPU Process Scheduling Simulator**
+2. **CPU Process Scheduling Simulator**  
     Implements can be used to compare four CPU process scheduling algorithms
     - FCFS (First-Come, First-Served)
     - SJF (Shortest Job First)
@@ -21,7 +21,7 @@ Second project demonstrates key Operating System concepts through three simulati
 1. **Virtual Memory Paging**  
    Converts a 32-bit virtual address into its corresponding page number and offset based on a user-defined page size.
 
-2. **Disk Scheduling Algorithms**
+2. **Disk Scheduling Algorithms**  
    Implements and compares four disk scheduling methods:
    - FCFS (First-Come, First-Served)  
    - SSTF (Shortest Seek Time First)  
