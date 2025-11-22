@@ -15,7 +15,7 @@
    - C-SCAN (Circular SCAN)  
    Each algorithm calculates total head movement and number of direction changes when servicing 1,000 cylinder requests across a 5,000-cylinder disk.  
    ## Run by typing  
-   ./diskScheduler <initial head> <previous head>
+   ./diskScheduler initial_head previous_head
 
 3. **Logical Block Address Translation**  
    Translates a logical block number into its physical disk address in `<Cylinder, Track, Sector>` format.  
