@@ -7,12 +7,6 @@
  *   2. SSTF
  *   3. SCAN
  *   4. C-SCAN
- *
- * Usage:
- *   g++ task2_diskscheduling.cpp -o diskschedule
- *   ./diskschedule <initial_head> [<previous_head>]
- *
- * If no input.txt is present, 1000 random requests are generated.
  */
 
 #include <iostream>
@@ -32,73 +26,116 @@ struct Result {
     int directionChanges = 0;
 };
 
-// ------------------------------------------------------------
+// Direction Tracker
+inline int getDirection(int from, int to) {
+    if (to > from) return 1;   // moving right
+    if (to < from) return -1;  // moving left
+    return 0;                  // no movement
+}
+
 // Utility: load requests from input.txt or generate randomly
-// ------------------------------------------------------------
 vector<int> loadRequests() {
     vector<int> reqs;
-    ifstream in("input.txt");
-    int val;
-    if (in) {
-        while (in >> val) {
-            if (val >= 0 && val < CYLINDERS)
-                reqs.push_back(val);
+    int choice;
+
+    cout << "\nChoose request source:\n";
+    cout << "1. Load requests from input.txt\n";
+    cout << "2. Generate 1000 random requests\n";
+    cout << "Enter choice: ";
+    cin >> choice;
+
+    if (choice == 1) {
+        ifstream in("input.txt");
+        int val;
+
+        if (!in) {
+            cout << "Error: input.txt not found. Generating random requests instead.\n";
+        } else {
+            while (in >> val) {
+                if (val >= 0 && val < CYLINDERS)
+                    reqs.push_back(val);
+            }
+            in.close();
+            cout << "Loaded " << reqs.size() << " requests from input.txt\n";
+
+            if (!reqs.empty())
+                return reqs;
+
+            cout << "input.txt was empty or invalid. Generating random requests instead.\n";
         }
-        in.close();
-        cout << "Loaded " << reqs.size() << " requests from input.txt\n";
     }
-    if (reqs.empty()) {
-        srand((unsigned)time(nullptr));
-        for (int i = 0; i < REQUEST_COUNT; i++)
-            reqs.push_back(rand() % CYLINDERS);
-        cout << "Generated " << REQUEST_COUNT << " random requests.\n";
-    }
+
+    // Option 2 or invalid file → generate 1000 random requests
+    srand((unsigned)time(nullptr));
+    for (int i = 0; i < REQUEST_COUNT; i++)
+        reqs.push_back(rand() % CYLINDERS);
+
+    cout << "Generated " << REQUEST_COUNT << " random requests.\n";
     return reqs;
 }
 
-// ------------------------------------------------------------
-// FCFS – First-Come, First-Served
-// ------------------------------------------------------------
+// FCFS 
 Result fcfs(const vector<int>& reqs, int head) {
     Result r;
     int curr = head;
-    for (int i : reqs) {
-        r.totalMovement += abs(i - curr);
-        curr = i;
+
+    int prevDir = 0;
+
+    for (int next : reqs) {
+        int dir = getDirection(curr, next);
+
+        if (prevDir != 0 && dir != 0 && dir != prevDir)
+            r.directionChanges++;
+
+        r.totalMovement += abs(next - curr);
+
+        prevDir = dir;
+        curr = next;
     }
     return r;
 }
 
-// ------------------------------------------------------------
-// SSTF – Shortest Seek Time First
-// ------------------------------------------------------------
+
+
+// SSTF 
 Result sstf(vector<int> reqs, int head) {
     Result r;
-    vector<bool> done(reqs.size(), false);
     int curr = head;
-    int completed = 0;
-    while (completed < (int)reqs.size()) {
-        int nearest = -1, minDist = 1e9;
-        for (int i = 0; i < (int)reqs.size(); i++) {
-            if (!done[i]) {
+    int prevDir = 0;
+
+    vector<bool> used(reqs.size(), false);
+    int done = 0;
+
+    while (done < reqs.size()) {
+        int best = -1, bestDist = 1e9;
+
+        for (int i = 0; i < reqs.size(); i++) {
+            if (!used[i]) {
                 int dist = abs(reqs[i] - curr);
-                if (dist < minDist) {
-                    minDist = dist;
-                    nearest = i;
+                if (dist < bestDist) {
+                    bestDist = dist;
+                    best = i;
                 }
             }
         }
-        r.totalMovement += minDist;
-        curr = reqs[nearest];
-        done[nearest] = true;
-        completed++;
+
+        int dir = getDirection(curr, reqs[best]);
+        if (prevDir != 0 && dir != 0 && dir != prevDir)
+            r.directionChanges++;
+
+        r.totalMovement += bestDist;
+
+        prevDir = dir;
+        curr = reqs[best];
+        used[best] = true;
+        done++;
     }
+
     return r;
 }
 
-// ------------------------------------------------------------
-// SCAN – Elevator Algorithm
-// ------------------------------------------------------------
+
+// SCAN 
 Result scan(vector<int> reqs, int head, int prevHead) {
     Result r;
     sort(reqs.begin(), reqs.end());
@@ -138,9 +175,7 @@ Result scan(vector<int> reqs, int head, int prevHead) {
     return r;
 }
 
-// ------------------------------------------------------------
 // C-SCAN – Circular SCAN
-// ------------------------------------------------------------
 Result cscan(vector<int> reqs, int head, int prevHead) {
     Result r;
     sort(reqs.begin(), reqs.end());
@@ -186,9 +221,8 @@ Result cscan(vector<int> reqs, int head, int prevHead) {
     return r;
 }
 
-// ------------------------------------------------------------
-// Main driver
-// ------------------------------------------------------------
+
+// Main allowing command line arguments
 int main(int argc, char* argv[]) {
     if (argc < 2) {
         cerr << "Usage: ./diskschedule <initial_head> [<previous_head>]\n";
@@ -196,7 +230,7 @@ int main(int argc, char* argv[]) {
     }
     int head = atoi(argv[1]);
     int prev = (argc >= 3) ? atoi(argv[2]) : head - 1;
-
+    cout << endl;
     vector<int> reqs = loadRequests();
 
     cout << "\nInitial Head Position: " << head << endl;
@@ -216,7 +250,6 @@ int main(int argc, char* argv[]) {
     Result r4 = cscan(reqs, head, prev);
     cout << "C-SCAN\t\t" << r4.totalMovement << "\t\t" << r4.directionChanges << endl;
 
-    cout << "--------------------------------------------------------\n";
-    cout << "Done.\n";
+
     return 0;
 }
